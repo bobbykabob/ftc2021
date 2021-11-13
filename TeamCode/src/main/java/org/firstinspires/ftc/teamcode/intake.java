@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class intake() {
-  private hardwareMap hw;
+public class intake {
+  private HardwareMap hw;
   private DcMotor intake;
-  public void intake(hardwareMap ahw){
+  public intake(HardwareMap ahw){
     hw = ahw;
     intake = hw.get(DcMotor.class, "intake");
   }
