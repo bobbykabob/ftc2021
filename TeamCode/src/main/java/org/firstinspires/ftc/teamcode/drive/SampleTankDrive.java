@@ -47,6 +47,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksTo
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import org.firstinspires.ftc.teamcode.drive.Follower;
 
 /*
  * Simple tank drive hardware implementation for REV hardware.
@@ -68,7 +69,7 @@ public class SampleTankDrive extends TankDrive {
 
     //private TrajectoryFollower follower;
 
-    private RamseteFollower follower;
+    private Follower follower;
     private List<DcMotorEx> motors, leftMotors, rightMotors;
     private BNO055IMU imu;
 
