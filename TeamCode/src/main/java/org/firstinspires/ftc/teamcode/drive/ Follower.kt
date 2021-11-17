@@ -44,6 +44,7 @@ class Follower @JvmOverloads constructor(
         val targetRobotVel = Kinematics.fieldToRobotVelocity(targetPose, targetVel)
 
         val targetV = targetRobotVel.x
+        //this line is sus, why only x?
         val targetOmega = targetRobotVel.heading
 
         val error = Kinematics.calculateFieldPoseError(targetPose, currentPose)
@@ -52,7 +53,7 @@ class Follower @JvmOverloads constructor(
         val k3 = k1
         val k2 = b
 
-        val v = targetV * cos(error.heading) +
+        val v = targetV * cos(error.heading) + /*what?*/
                 k1 * (cos(currentPose.heading) * error.x + sin(currentPose.heading) * error.y)
         val omega = targetOmega + k2 * targetV * sinc(error.heading) *
                 (cos(currentPose.heading) * error.y - sin(currentPose.heading) * error.x) +
