@@ -22,10 +22,6 @@ public class testTeleop extends LinearOpMode {
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        DcMotorEx leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        DcMotorEx rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
 
         hardware robit = new hardware(hardwareMap);
 
@@ -43,6 +39,8 @@ public class testTeleop extends LinearOpMode {
             if (gamepad1.dpad_up) {
                 robit.duck.spinDuck();
             } else if (gamepad1.dpad_down ) {
+                robit.duck.spinDuckOther();
+            } else {
                 robit.duck.stop();
             }
             drive.setWeightedDrivePower(

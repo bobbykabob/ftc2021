@@ -17,10 +17,10 @@ import java.util.List;
 public class outtake {
 
 
-    public static double kp = 0.003;
+    public static double kp = 0.001;
     public static double bottom = 0;
     public static double mid = 450;
-    public static double up = 900;
+    public static double up = 1200;
 
     public static double in1 = 0;
     public static double out1 = 0.5;
