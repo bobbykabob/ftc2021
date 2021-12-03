@@ -25,10 +25,23 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 10)
                 .setBotDimensions(12, 12)
                 .setDriveTrainType(DriveTrainType.TANK)
-
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-24, -60, Math.toRadians(180)))
-                                .splineTo(new Vector2d(-20, -48), Math.toRadians(160))
+                        drive.trajectorySequenceBuilder(new Pose2d(-24, -66, Math.toRadians(270)))
+                                .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
+                                    //lift slide
+                                })
+                                .setReversed(true)
+                                .splineTo(new Vector2d(-18, -38), Math.toRadians(70))
+                                .setReversed(false)
+                                .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
+                                    //put cube in
+                                })
+                                .waitSeconds(1)
+                                .UNSTABLE_addTemporalMarkerOffset(1, ()-> {
+                                    //put lift down
+                                })
+                                .splineTo(new Vector2d(-60, -50), Math.toRadians(250))
+
                                 .build()
                 )
                 .start();

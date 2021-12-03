@@ -68,7 +68,6 @@ public class SampleTankDrive extends TankDrive {
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint accelConstraint = getAccelerationConstraint(MAX_ACCEL);
-    //private RamseteFollowerModified follower;
 
     private RamseteFollower follower;
     private List<DcMotorEx> motors, leftMotors, rightMotors;
@@ -199,7 +198,6 @@ public class SampleTankDrive extends TankDrive {
     public void update() {
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
-        System.out.println("here");
         if (signal != null) setDriveSignal(signal);
     }
 
