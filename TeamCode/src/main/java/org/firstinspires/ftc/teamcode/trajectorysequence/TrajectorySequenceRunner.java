@@ -196,6 +196,7 @@ public class TrajectorySequenceRunner {
 
         dashboard.sendTelemetryPacket(packet);
 
+        System.out.println("driveSignal:" + driveSignal.toString());
         return driveSignal;
     }
 

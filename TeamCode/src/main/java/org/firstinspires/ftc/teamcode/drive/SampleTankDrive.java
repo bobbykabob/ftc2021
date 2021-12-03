@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.drive;
 
-import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
@@ -8,8 +7,9 @@ import com.acmerobotics.roadrunner.drive.DriveSignal;
 import com.acmerobotics.roadrunner.drive.TankDrive;
 import com.acmerobotics.roadrunner.followers.RamseteFollower;
 import com.acmerobotics.roadrunner.followers.TankPIDVAFollower;
-import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.kinematics.Kinematics;
+import com.acmerobotics.roadrunner.kinematics.TankKinematics;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
@@ -28,11 +28,11 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.apache.commons.math3.analysis.function.Tan;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,7 +47,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksTo
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
-import org.firstinspires.ftc.teamcode.drive.Follower;
+
+import androidx.annotation.NonNull;
 
 /*
  * Simple tank drive hardware implementation for REV hardware.
@@ -55,21 +56,21 @@ import org.firstinspires.ftc.teamcode.drive.Follower;
 @Config
 public class SampleTankDrive extends TankDrive {
 
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10, 0, 0);
 
-    public static double b = 0.0;
-    public static double zeta = 0.0;
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+
     public static double VX_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
+    public static double b = 0.02;
+    public static double zeta = 0.5;
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint accelConstraint = getAccelerationConstraint(MAX_ACCEL);
+    //private RamseteFollowerModified follower;
 
-    //private TrajectoryFollower follower;
-
-    private Follower follower;
+    private RamseteFollower follower;
     private List<DcMotorEx> motors, leftMotors, rightMotors;
     private BNO055IMU imu;
 
@@ -198,6 +199,7 @@ public class SampleTankDrive extends TankDrive {
     public void update() {
         updatePoseEstimate();
         DriveSignal signal = trajectorySequenceRunner.update(getPoseEstimate(), getPoseVelocity());
+        System.out.println("here");
         if (signal != null) setDriveSignal(signal);
     }
 
@@ -318,6 +320,7 @@ public class SampleTankDrive extends TankDrive {
                 new TankVelocityConstraint(maxVel, trackWidth)
         ));
     }
+
 
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
