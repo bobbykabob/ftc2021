@@ -16,12 +16,14 @@ public class redwarehouse extends LinearOpMode {
 
         SampleTankDrive drive = new SampleTankDrive(hardwareMap);
 
+        Pose2d startPose = new Pose2d(-24, -66, Math.toRadians(270));
+        drive.setPoseEstimate(startPose);
         telemetry.addLine("ready");
         telemetry.update();
         waitForStart();
 
         drive.followTrajectorySequenceAsync(
-                drive.trajectorySequenceBuilder(new Pose2d(-24, -66, Math.toRadians(270)))
+                drive.trajectorySequenceBuilder(startPose)
                         .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
                             //lift slide
                         })

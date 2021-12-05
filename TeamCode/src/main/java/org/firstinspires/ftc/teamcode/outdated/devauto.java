@@ -1,9 +1,13 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.outdated;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous
+import org.firstinspires.ftc.teamcode.hardware;
+import org.firstinspires.ftc.teamcode.outtake;
+
+@Disabled
 public class devauto extends LinearOpMode {
 
     @Override

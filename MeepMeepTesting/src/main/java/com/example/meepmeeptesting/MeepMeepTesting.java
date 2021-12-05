@@ -26,7 +26,7 @@ public class MeepMeepTesting {
                 .setBotDimensions(12, 12)
                 .setDriveTrainType(DriveTrainType.TANK)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-24, -66, Math.toRadians(270)))
+                        drive.trajectorySequenceBuilder(new Pose2d(0, -66, Math.toRadians(270)))
                                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
                                     //lift slide
                                 })
@@ -41,7 +41,8 @@ public class MeepMeepTesting {
                                     //put lift down
                                 })
                                 .splineTo(new Vector2d(-60, -50), Math.toRadians(250))
-
+                                .setReversed(true)
+                                .splineTo(new Vector2d(-60, -35), Math.toRadians(90))
                                 .build()
                 )
                 .start();

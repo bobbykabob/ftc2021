@@ -17,15 +17,15 @@ import java.util.List;
 public class outtake {
 
 
-    public static double kp = 0.001;
+    public static double kp = 0.007;
     public static double bottom = 0;
-    public static double mid = 450;
-    public static double up = 1200;
+    public static double mid = 240;
+    public static double up = 530;
 
-    public static double in1 = 0;
-    public static double out1 = 0.5;
-    public static double in2 = 0.06;
-    public static double out2 = 0.5;
+    public static double in1 = 0.93;
+    public static double out1 = 0.55;
+    public static double in2 = 0.17;
+    public static double out2 = 0.55;
 
     public enum liftPos {
         BOTTOM,
@@ -91,6 +91,7 @@ public class outtake {
     }
 
     public void setLiftMotorPower(double power) {
+
         lift1.setPower(power);
         lift2.setPower(power);
     }
@@ -105,10 +106,12 @@ public class outtake {
     public void setOuttake(boxPos box) {
         switch (box) {
             case IN:
+                outtake1.setPosition(in1);
                 outtake2.setPosition(in2);
 
                 break;
             case OUT:
+                outtake1.setPosition(out1);
                 outtake2.setPosition(out2);
                 break;
         }

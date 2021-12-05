@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
 import org.firstinspires.ftc.teamcode.hardware;
+import org.firstinspires.ftc.teamcode.outtake;
 
 @Autonomous
 public class redduck extends LinearOpMode {
@@ -17,27 +18,34 @@ public class redduck extends LinearOpMode {
         hardware robit = new hardware(hardwareMap);
 
         SampleTankDrive drive = new SampleTankDrive(hardwareMap);
-
+        Pose2d startPose = new Pose2d(-24, -66, Math.toRadians(270));
+        drive.setPoseEstimate(startPose);
         telemetry.addLine("ready");
         telemetry.update();
         waitForStart();
 
         drive.followTrajectorySequenceAsync(
-                drive.trajectorySequenceBuilder(new Pose2d(-24, -66, Math.toRadians(270)))
+                drive.trajectorySequenceBuilder(startPose)
                         .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
-                            //lift slide
+                            robit.outtake.setTargetLiftPos(outtake.liftPos.UP);
                         })
                         .setReversed(true)
                         .splineTo(new Vector2d(-18, -38), Math.toRadians(70))
                         .setReversed(false)
                         .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
-                            //put cube in
+                            robit.outtake.setOuttake(outtake.boxPos.OUT);
                         })
                         .waitSeconds(1)
-                        .UNSTABLE_addTemporalMarkerOffset(1, ()-> {
-                            //put lift down
+                        .UNSTABLE_addTemporalMarkerOffset(2, ()-> {
+                            robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
                         })
                         .splineTo(new Vector2d(-60, -50), Math.toRadians(250))
+                        .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                            robit.duck.spinDuck();
+                        })
+                        .waitSeconds(5)
+                        .setReversed(true)
+                        .splineTo(new Vector2d(-60, -35), Math.toRadians(90))
                         .build()
         );
 
