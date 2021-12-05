@@ -10,7 +10,8 @@ public class MeepMeepTesting {
     public static void main(String[] args) {
         // TODO: If you experience poor performance, enable this flag
         // System.setProperty("sun.java2d.opengl", "true");
-
+        Pose2d startPose = new Pose2d(0, 66, Math.toRadians(90));
+        Vector2d hubVector = new Vector2d(-4, 38);
         // Declare a MeepMeep instance
         // With a field size of 800 pixels
         MeepMeep mm = new MeepMeep(800)
@@ -26,23 +27,55 @@ public class MeepMeepTesting {
                 .setBotDimensions(12, 12)
                 .setDriveTrainType(DriveTrainType.TANK)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(0, -66, Math.toRadians(270)))
+                        drive.trajectorySequenceBuilder(startPose)
                                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
                                     //lift slide
+
                                 })
                                 .setReversed(true)
-                                .splineTo(new Vector2d(-18, -38), Math.toRadians(70))
+                                .splineTo(hubVector, Math.toRadians(250))
                                 .setReversed(false)
                                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
                                     //put cube in
+
                                 })
                                 .waitSeconds(1)
                                 .UNSTABLE_addTemporalMarkerOffset(1, ()-> {
-                                    //put lift down
+                                    //put lift down and put servos back
+
                                 })
-                                .splineTo(new Vector2d(-60, -50), Math.toRadians(250))
+                                .splineTo(new Vector2d(20, 66), Math.toRadians(0))
+                                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+
+                                    //turn intake on
+                                })
+                                .splineTo(new Vector2d(50, 66), Math.toRadians(0))
+                                .waitSeconds(2)
                                 .setReversed(true)
-                                .splineTo(new Vector2d(-60, -35), Math.toRadians(90))
+                                .splineTo(new Vector2d(20, 66), Math.toRadians(180))
+                                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                                    //put slide up
+
+                                })
+
+                                .splineTo(hubVector, Math.toRadians(250))
+                                .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
+                                    //put cube in
+
+                                })
+                                .waitSeconds(1)
+                                .UNSTABLE_addTemporalMarkerOffset(1, ()-> {
+                                    //put lift down and put servos back
+
+                                })
+                                .setReversed(false)
+                                .splineTo(new Vector2d(20, 66), Math.toRadians(0))
+                                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                                    //turn intake on
+
+                                })
+                                .splineTo(new Vector2d(50, 66), Math.toRadians(0))
+                                .waitSeconds(2)
                                 .build()
                 )
                 .start();
