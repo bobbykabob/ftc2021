@@ -4,17 +4,22 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.pipelines.TSEpipeline;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
 
 public class camera {
     public OpenCvCamera webcam;
 
     HardwareMap hw;
+    private TSEpipeline tsepipeline = new TSEpipeline();
     public camera(HardwareMap hw) {
         this.hw = hw;
         int cameraMonitorViewId = hw.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hw.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hw.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        webcam.setPipeline(tsepipeline);
 
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -22,7 +27,7 @@ public class camera {
                 webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
                     @Override
                     public void onOpened() {
-                        webcam.startStreaming(320, 240);
+                        webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
                     }
 
                     @Override
@@ -39,7 +44,10 @@ public class camera {
 
             }
         });
+
         FtcDashboard.getInstance().startCameraStream(webcam, 0);
 
     }
+
+
 }
