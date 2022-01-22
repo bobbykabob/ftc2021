@@ -16,7 +16,9 @@ public class blueduck extends LinearOpMode {
         hardware robit = new hardware(hardwareMap);
 
         SampleTankDrive drive = new SampleTankDrive(hardwareMap);
-        Pose2d startPose = new Pose2d(-24, 66, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(-36, 66, Math.toRadians(270));
+        Pose2d hubPose = new Pose2d(-14, 38, Math.toRadians(290));
+
         drive.setPoseEstimate(startPose);
         telemetry.addLine("ready");
         telemetry.update();
@@ -24,27 +26,50 @@ public class blueduck extends LinearOpMode {
 
         drive.followTrajectorySequenceAsync(
                 drive.trajectorySequenceBuilder(startPose)
+                        .splineTo(new Vector2d(-62, 63), Math.toRadians(135))
+                        .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                            robit.duck.spinDuck();
+                        })
+                        .waitSeconds(3)
+                        .setReversed(true)
                         .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
-                            robit.outtake.setTargetLiftPos(outtake.liftPos.UP);
+                            robit.setLiftfromTSE();
+                            robit.duck.stop();
+
                         })
 
-                        .splineTo(new Vector2d(-18, 38), Math.toRadians(290))
+                        .splineTo(hubPose.vec(), hubPose.getHeading())
                         .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
+                            robit.outtake.setOuttake(outtake.boxPos.OUT);
+                        })
+                        .waitSeconds(1)
+                        .UNSTABLE_addTemporalMarkerOffset(2, ()-> {
+                            robit.outtake.setOuttake(outtake.boxPos.IN);
+                            robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
+                            robit.intake.setMotorPower(1);
+                            //put down slides & turn on intake
+                        })
+
+                        .setReversed(false)
+                        .splineTo(new Vector2d(-60, 60), Math.toRadians(90))
+                        .setReversed(true)
+                        .UNSTABLE_addTemporalMarkerOffset(1, ()-> {
+                            robit.intake.setMotorPower(0);
+                            robit.outtake.setTargetLiftPos(outtake.liftPos.UP);
+                        })
+                        .splineTo(hubPose.vec(), hubPose.getHeading())
+                        .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
+
                             robit.outtake.setOuttake(outtake.boxPos.OUT);
                         })
                         .waitSeconds(1)
                         .UNSTABLE_addTemporalMarkerOffset(2, ()-> {
                             robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
                             robit.outtake.setOuttake(outtake.boxPos.IN);
-
+                            //put down slides & turn on intake
                         })
-                        .splineTo(new Vector2d(-60, 50), Math.toRadians(110))
-                        .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                            robit.duck.spinDuck();
-                        })
-                        .waitSeconds(5)
-                        .setReversed(true)
-                        .splineTo(new Vector2d(-60, 35), Math.toRadians(270))
+                        .setReversed(false)
+                        .splineTo(new Vector2d(-60, 35), Math.toRadians(225))
                         .build()
         );
 

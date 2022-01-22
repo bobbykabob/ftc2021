@@ -6,13 +6,14 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
 
 /*
  * This is an example of a more complex path to really test the tuning.
  */
-@Disabled
+@TeleOp
 public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

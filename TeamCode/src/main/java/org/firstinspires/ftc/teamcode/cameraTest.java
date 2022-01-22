@@ -14,6 +14,8 @@ public class cameraTest extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
+            telemetry.addData("position", robit.camera.tsepipeline.getTSEpos());
+            telemetry.update();
         }
     }
 }

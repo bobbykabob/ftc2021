@@ -5,13 +5,18 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.core.colorscheme.scheme.ColorSchemeRedDark;
 import com.noahbres.meepmeep.roadrunner.DriveTrainType;
+import com.noahbres.meepmeep.roadrunner.SampleTankDrive;
+import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequence;
+import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
 public class MeepMeepTesting {
     public static void main(String[] args) {
         // TODO: If you experience poor performance, enable this flag
         // System.setProperty("sun.java2d.opengl", "true");
-        Pose2d startPose = new Pose2d(0, 66, Math.toRadians(270));
-        Vector2d hubVector = new Vector2d(-4, 38);
+        Pose2d startPose = new Pose2d(-36, 66, Math.toRadians(270));
+        Pose2d hubPose = new Pose2d(-10, 38, Math.toRadians(270));
+
+
         // Declare a MeepMeep instance
         // With a field size of 800 pixels
         MeepMeep mm = new MeepMeep(400)
@@ -27,57 +32,42 @@ public class MeepMeepTesting {
                 .setDriveTrainType(DriveTrainType.TANK)
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(startPose)
-                                .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
-                                    //lift slide
-
-                                })
-                                .splineTo(new Vector2d(15, 48), Math.toRadians(0))
-                                .setReversed(true)
-                                .splineTo(hubVector, Math.toRadians(250))
-                                .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
-                                    //put cube in
-
-                                })
-                                .setReversed(false)
-                                .waitSeconds(1)
-                                .UNSTABLE_addTemporalMarkerOffset(1, ()-> {
-                                    //put lift down and put servos back
-
-                                })
-                                .splineTo(new Vector2d(20, 66), Math.toRadians(0))
+                                .splineTo(new Vector2d(-60, 55), Math.toRadians(110))
                                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-
-                                    //turn intake on
                                 })
-                                .splineTo(new Vector2d(50, 66), Math.toRadians(0))
-                                .waitSeconds(2)
+                                .waitSeconds(5)
                                 .setReversed(true)
-                                .splineTo(new Vector2d(20, 66), Math.toRadians(180))
-                                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                                    //put slide up
+                                .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
 
                                 })
 
-                                .splineTo(hubVector, Math.toRadians(250))
+                                .splineTo(hubPose.vec(), hubPose.getHeading())
                                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
-                                    //put cube in
-
+                                    //put up slides
                                 })
                                 .waitSeconds(1)
-                                .UNSTABLE_addTemporalMarkerOffset(1, ()-> {
-                                    //put lift down and put servos back
+                                .UNSTABLE_addTemporalMarkerOffset(2, ()-> {
+                                    //put down slides & turn on intake
 
+                                })
+
+                                .setReversed(false)
+                                .splineTo(new Vector2d(-50, 55), Math.toRadians(90))
+                                .waitSeconds(2)
+                                .setReversed(true)
+                                .splineTo(hubPose.vec(), hubPose.getHeading())
+                                .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
+                                    //put up slides
+                                })
+                                .waitSeconds(1)
+                                .UNSTABLE_addTemporalMarkerOffset(2, ()-> {
+                                    //put down slides & turn on intake
                                 })
                                 .setReversed(false)
-                                .splineTo(new Vector2d(20, 66), Math.toRadians(0))
-                                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                                    //turn intake on
-
-                                })
-                                .splineTo(new Vector2d(50, 66), Math.toRadians(0))
-                                .waitSeconds(2)
+                                .splineTo(new Vector2d(-60, 35), Math.toRadians(225))
                                 .build()
                 )
+
                 .start();
     }
 }

@@ -14,7 +14,7 @@ public class camera {
     public OpenCvCamera webcam;
 
     HardwareMap hw;
-    private TSEpipeline tsepipeline = new TSEpipeline();
+    public TSEpipeline tsepipeline = new TSEpipeline();
     public camera(HardwareMap hw) {
         this.hw = hw;
         int cameraMonitorViewId = hw.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hw.appContext.getPackageName());

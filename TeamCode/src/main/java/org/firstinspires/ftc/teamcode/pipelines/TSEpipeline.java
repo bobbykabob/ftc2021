@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.pipelines;
 
-import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -64,7 +63,6 @@ public class TSEpipeline extends OpenCvPipeline {
         Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
 
 
-        Log.i("contours", contours.toString());
         //Imgproc.drawContours(ret, contours, contours.lastIndexOf(contours), new Scalar(0.0, 255.0, 0.0), 3);
         int maxWidth = 0;
         for (MatOfPoint c : contours) {
@@ -85,11 +83,11 @@ public class TSEpipeline extends OpenCvPipeline {
                 ret,
                 new Point(
                         .0,
-                        (double) HORIZON
+                        HORIZON
                 ),
                 new Point(
                         320.0,
-                        (double) HORIZON
+                        HORIZON
                 ),
                 new Scalar(
                         255.0,

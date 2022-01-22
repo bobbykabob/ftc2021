@@ -16,12 +16,12 @@ public class duck {
 
     }
     public void spinDuck() {
-        duck1.setPower(-1);
+        duck1.setPower(1);
         duck2.setPower(1);
     }
 
     public void spinDuckOther() {
-        duck1.setPower(1);
+        duck1.setPower(-1);
         duck2.setPower(-1);
     }
 

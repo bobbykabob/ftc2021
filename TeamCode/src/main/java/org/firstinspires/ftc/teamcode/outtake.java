@@ -23,9 +23,9 @@ public class outtake {
     public static double up = 530;
 
     public static double in1 = 0.93;
-    public static double out1 = 0.55;
+    public static double out1 = 0.5;
     public static double in2 = 0.17;
-    public static double out2 = 0.55;
+    public static double out2 = 0.6;
 
     public enum liftPos {
         BOTTOM,
