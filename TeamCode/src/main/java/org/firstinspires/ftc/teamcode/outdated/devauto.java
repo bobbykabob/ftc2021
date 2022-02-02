@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.outdated;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -29,7 +28,7 @@ public class devauto extends LinearOpMode {
             robit.update();
 
         }
-        robit.outtake.setOuttake(outtake.boxPos.OUT);
+        robit.outtake.setOuttake(outtake.outtakePos.OUT_OPEN);
         currentTime = System.currentTimeMillis();
         startTime = currentTime;
         while (currentTime -startTime < 1000 && opModeIsActive()) {
@@ -37,7 +36,7 @@ public class devauto extends LinearOpMode {
             currentTime = System.currentTimeMillis();
 
         }
-        robit.outtake.setOuttake(outtake.boxPos.IN);
+        robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
 
         currentTime = System.currentTimeMillis();
         startTime = currentTime;

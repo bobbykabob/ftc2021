@@ -1,33 +1,48 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+@Config
 public class duck {
-    private CRServo duck1;
-    private CRServo duck2;
+    private DcMotor duck;
+
+    public static double initalPower = 0.8;
+    public static double endPower = 1;
+    public static long MS_between_Powers = 1000;
+    private boolean isOn = false;
+    private long startTime = System.currentTimeMillis();
+
     private HardwareMap hw;
     public duck(HardwareMap ahw) {
         hw = ahw;
-        duck1 = hw.get(CRServo.class, "duck1");
-        duck2 = hw.get(CRServo.class, "duck2");
+       duck = hw.get(DcMotor.class, "duck");
     }
-    public void update() {
 
+    public void update() {
+        if (isOn) {
+            if ((System.currentTimeMillis() - startTime) > MS_between_Powers) {
+                duck.setPower(endPower *(duck.getPower() / initalPower));
+            }
+        }
     }
     public void spinDuck() {
-        duck1.setPower(1);
-        duck2.setPower(1);
+        isOn = true;
+        startTime = System.currentTimeMillis();
+        duck.setPower(initalPower);
     }
 
     public void spinDuckOther() {
-        duck1.setPower(-1);
-        duck2.setPower(-1);
+        isOn = true;
+        startTime = System.currentTimeMillis();
+        duck.setPower(-initalPower);
     }
 
     public void stop() {
-        duck1.setPower(0);
-        duck2.setPower(0);
+        isOn = false;
+        duck.setPower(0);
 
     }
 }

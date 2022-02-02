@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.outtake.boxPos.IN;
-import static org.firstinspires.ftc.teamcode.outtake.boxPos.OUT;
+import static org.firstinspires.ftc.teamcode.outtake.outtakePos.IN_CLOSED;
+import static org.firstinspires.ftc.teamcode.outtake.outtakePos.OUT_OPEN;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
-import org.firstinspires.ftc.teamcode.hardware;
-
-import java.util.List;
 
 @TeleOp
 @Config
@@ -21,6 +17,7 @@ import java.util.List;
 public class teleop extends LinearOpMode {
 
     public static double deltaY = -0.5;
+
     @Override
     public void runOpMode() throws InterruptedException {
         SampleTankDrive drive = new SampleTankDrive(hardwareMap);
@@ -66,7 +63,6 @@ public class teleop extends LinearOpMode {
             prevY = gamepadY;
 
 
-
             if (gamepad1.y) {
                 robit.outtake.setTargetLiftPos(outtake.liftPos.UP);
             } else if (gamepad1.x) {
@@ -76,9 +72,9 @@ public class teleop extends LinearOpMode {
             }
 
             if (gamepad1.dpad_left) {
-                robit.outtake.setOuttake(IN);
+                robit.outtake.iterateOuttakeBackward();
             } else if (gamepad1.dpad_right) {
-                robit.outtake.setOuttake(OUT);
+                robit.outtake.iterateOuttakeForward();
             }
 
             if (gamepad1.left_stick_button) {
@@ -95,7 +91,7 @@ public class teleop extends LinearOpMode {
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
-            telemetry.addData("tsePos", robit.TSEarm.getPos());
+            telemetry.addData("outtake Pos", robit.outtake.currentPos);
             telemetry.update();
         }
 

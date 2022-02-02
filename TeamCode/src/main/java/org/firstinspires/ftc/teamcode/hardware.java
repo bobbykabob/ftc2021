@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.intake;
 import org.firstinspires.ftc.teamcode.outtake;
+import org.firstinspires.ftc.teamcode.pipelines.TSEpipeline;
 
 public class hardware {
   
@@ -21,21 +22,21 @@ public class hardware {
     TSEarm = new TSEarm(hw);
   }
 
-  public void setLiftfromTSE() {
-    switch (camera.tsepipeline.getTSEpos()) {
+  public void setLiftfromTSE(TSEpipeline.TSEpos pos) {
+    switch (pos) {
       case LEFT:
         outtake.setTargetLiftPos(org.firstinspires.ftc.teamcode.outtake.liftPos.BOTTOM);
         break;
       case RIGHT:
-        outtake.setTargetLiftPos(org.firstinspires.ftc.teamcode.outtake.liftPos.MID);
+        outtake.setTargetLiftPos(org.firstinspires.ftc.teamcode.outtake.liftPos.UP);
         break;
       case MIDDLE:
-        outtake.setTargetLiftPos(org.firstinspires.ftc.teamcode.outtake.liftPos.UP);
-
+        outtake.setTargetLiftPos(org.firstinspires.ftc.teamcode.outtake.liftPos.MID);
         break;
     }
   }
   public void update() {
     outtake.update();
+    duck.update();
   }
 }

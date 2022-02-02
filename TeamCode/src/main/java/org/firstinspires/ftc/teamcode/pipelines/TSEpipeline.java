@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.pipelines;
 
 
-import com.acmerobotics.dashboard.config.Config;
+
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -17,13 +17,20 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-
-@Config
+import com.acmerobotics.dashboard.config.Config;
+//@Config
 public class TSEpipeline extends OpenCvPipeline {
 
-    public static double lowerValues[] = {0, 0, 0};
-    public static double upperValues[] = {255, 120, 255};
+    public static double lowerValues0 = 0;
+    public static double lowerValues1 = 0;
+    public static double lowerValues2 = 0;
+    public static double upperValues0 = 255;
+    public static double upperValues1 = 110;
+    public static double upperValues2 = 255;
+    private double lowerValues[] = {lowerValues0, lowerValues1, lowerValues2};
+    private double upperValues[] = {upperValues0, upperValues1, upperValues2};
 
+    public static double minArea = 500;
 
     private Mat mat = new Mat();
     private Mat ret = new Mat();
@@ -41,11 +48,14 @@ public class TSEpipeline extends OpenCvPipeline {
         MIDDLE,
         RIGHT
     }
-    public static double posThresholds[] = {106, 212};
+
+    public static double posThreshold = 100;
 
     @Override
     public Mat processFrame(Mat input) {
         ret.release();
+        double lowerValues[] = {lowerValues0, lowerValues1, lowerValues2};
+        double upperValues[] = {upperValues0, upperValues1, upperValues2};
         Scalar lower = new Scalar(lowerValues[0],lowerValues[1],lowerValues[2]);
         Scalar upper = new Scalar(upperValues[0], upperValues[1], upperValues[2]);
 
@@ -63,6 +73,7 @@ public class TSEpipeline extends OpenCvPipeline {
         Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
 
 
+        maxRect = new Rect(400, 0, 0, 0);
         //Imgproc.drawContours(ret, contours, contours.lastIndexOf(contours), new Scalar(0.0, 255.0, 0.0), 3);
         int maxWidth = 0;
         for (MatOfPoint c : contours) {
@@ -71,7 +82,7 @@ public class TSEpipeline extends OpenCvPipeline {
 
             int w = rect.width;
             // checking if the rectangle is below the horizon
-            if (w > maxWidth && (rect.y > HORIZON) && ((rect.height / rect.width) > minRatio)) {
+            if (w > maxWidth && (rect.y > HORIZON) && ((rect.height / rect.width) > minRatio) && (rect.area() > minArea)) {
                 maxWidth = w;
                 maxRect = rect;
             }
@@ -95,6 +106,7 @@ public class TSEpipeline extends OpenCvPipeline {
                         255.0)
         );
 
+
         TSEx = maxRect.x;
         mat.release();
         mask.release();
@@ -103,12 +115,20 @@ public class TSEpipeline extends OpenCvPipeline {
     }
 
     public TSEpos getTSEpos() {
-        if (TSEx > 0 && TSEx < posThresholds[0]) {
-            return TSEpos.LEFT;
-        } else if (TSEx > posThresholds[0] && TSEx < posThresholds[1]) {
-            return TSEpos.MIDDLE;
-        } else {
+        if (TSEx == 400){
+            //400 = not visible
             return TSEpos.RIGHT;
         }
+        else if (TSEx < posThreshold) {
+            return TSEpos.LEFT;
+        } else if (TSEx > posThreshold) {
+            return TSEpos.MIDDLE;
+        } else {
+            return  TSEpos.RIGHT;
+        }
+    }
+
+    public double getTSEx() {
+        return TSEx;
     }
 }
