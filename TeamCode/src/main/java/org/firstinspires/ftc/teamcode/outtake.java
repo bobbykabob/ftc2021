@@ -13,19 +13,19 @@ import java.util.List;
 public class outtake {
 
 
-    public static double kp = 0.007;
+    public static double kp = 0.003;
     public static double bottom = 0;
     public static double mid = 240;
-    public static double up = 530;
+    public static double up = 550;
 
-    public static double inPivot = 0.3;
+    public static double inPivot = 0.28;
     public static double outPivot = 0.5;
-    public static double inHoriz = 0.9;
-    public static double outHoriz = 0.2;
-    public static double openClaw = 0.3;
-    public static double closedClaw = 0;
+    public static double inHoriz = 1;
+    public static double outHoriz = 0.3;
+    public static double openClaw = 0.85;
+    public static double closedClaw = 0.6;
 
-    public static int timeBetweenSTART_PIVOT = 500;
+    public static int timeBetweenSTART_PIVOT = 100;
     public static int MS_between_presses = 500;
 
     //lift

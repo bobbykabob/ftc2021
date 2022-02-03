@@ -11,7 +11,6 @@ public class hardware {
   public outtake outtake;
   public duck duck;
   public camera camera;
-  public TSEarm TSEarm;
   private HardwareMap hw;
   public hardware(HardwareMap ahw) {
     hw = ahw;
@@ -19,7 +18,7 @@ public class hardware {
     outtake = new outtake(hw);
     duck = new duck(hw);
     camera = new camera(hw);
-    TSEarm = new TSEarm(hw);
+
   }
 
   public void setLiftfromTSE(TSEpipeline.TSEpos pos) {

@@ -77,11 +77,7 @@ public class teleop extends LinearOpMode {
                 robit.outtake.iterateOuttakeForward();
             }
 
-            if (gamepad1.left_stick_button) {
-                robit.TSEarm.iterateBackward();
-            } else if (gamepad1.right_stick_button) {
-                robit.TSEarm.iterateForward();
-            }
+
 
             robit.update();
 
