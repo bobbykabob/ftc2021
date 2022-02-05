@@ -16,10 +16,10 @@ public class outtake {
     public static double kp = 0.003;
     public static double bottom = 0;
     public static double mid = 240;
-    public static double up = 550;
+    public static double up = 630;
 
-    public static double inPivot = 0.28;
-    public static double outPivot = 0.5;
+    public static double inPivot = 0.25;
+    public static double outPivot = 0.8;
     public static double inHoriz = 1;
     public static double outHoriz = 0.3;
     public static double openClaw = 0.85;
@@ -55,7 +55,7 @@ public class outtake {
     private HardwareMap hw;
 
 
-    public outtakePos currentPos = outtakePos.IN_CLOSED;
+    public outtakePos currentPos = outtakePos.IN_OPEN;
     private long out_closed_start_time = System.currentTimeMillis();
     private long prevClick = System.currentTimeMillis();
     public outtake(HardwareMap ahw) {
@@ -71,6 +71,7 @@ public class outtake {
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
     public void update() {
 
@@ -175,6 +176,7 @@ public class outtake {
     }
 
     public void setOuttake(outtakePos pos) {
+        currentPos = pos;
         switch (pos) {
             case IN_OPEN:
                 outtakePivot.setPosition(inPivot);

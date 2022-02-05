@@ -18,10 +18,16 @@ public class redduck extends LinearOpMode {
 
         SampleTankDrive drive = new SampleTankDrive(hardwareMap);
         Pose2d startPose = new Pose2d(-36, -66, Math.toRadians(90));
-        Pose2d hubPose = new Pose2d(-14, -38, Math.toRadians(70));
+        Pose2d hubPose = new Pose2d(-30, -24, Math.toRadians(0));
 
         drive.setPoseEstimate(startPose);
         while (!isStarted()) {
+            robit.intake.setMotorPower(gamepad1.left_trigger - gamepad1.right_trigger);
+            if (gamepad1.dpad_left) {
+                robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
+            } else if (gamepad1.dpad_right) {
+                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
+            }
             telemetry.addData("pos", robit.camera.tsepipeline.getTSEpos());
             telemetry.update();
         }
@@ -29,50 +35,62 @@ public class redduck extends LinearOpMode {
 
         drive.followTrajectorySequenceAsync(
                 drive.trajectorySequenceBuilder(startPose)
-                        .splineTo(new Vector2d(-62, -63), Math.toRadians(225))
+                        .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
+                            robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
+                        })
+                        .splineTo(new Vector2d(-62, -62), Math.toRadians(225))
                         .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                            robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED_START);
                             robit.duck.spinDuck();
                         })
                         .waitSeconds(3)
                         .setReversed(true)
                         .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
-                            //robit.setLiftfromTSE(pos);
                             robit.duck.stop();
-
+                            robit.setLiftfromTSE(pos);
                         })
-
+                        .splineTo(new Vector2d(-58, -30), Math.toRadians(90))
                         .splineTo(hubPose.vec(), hubPose.getHeading())
                         .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
-                            //robit.outtake.setOuttake(outtake.outtakePos.OUT_OPEN);
+                            robit.outtake.setOuttake(outtake.outtakePos.OUT_OPEN);
                         })
                         .waitSeconds(1)
                         .UNSTABLE_addTemporalMarkerOffset(2, ()-> {
-                            //robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
-                            //robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
+                            robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
                             robit.intake.setMotorPower(1);
-                            //put down slides & turn on intake
                         })
 
                         .setReversed(false)
-                        .splineTo(new Vector2d(-60, -60), Math.toRadians(270))
+                        .splineTo(new Vector2d(-58, -30), Math.toRadians(270))
+                        .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
+                            robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
+
+                        })
+                        .splineTo(new Vector2d(-60, -64), Math.toRadians(270))
                         .setReversed(true)
-                        .UNSTABLE_addTemporalMarkerOffset(1, ()-> {
+                        .UNSTABLE_addTemporalMarkerOffset(2, ()-> {
                             robit.intake.setMotorPower(0);
-                            //robit.outtake.setTargetLiftPos(outtake.liftPos.UP);
+                            robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
+                        })
+                        .UNSTABLE_addTemporalMarkerOffset(4, ()-> {
+                            robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED_START);
+                        })
+                        .splineTo(new Vector2d(-58, -30), Math.toRadians(90))
+
+                        .UNSTABLE_addTemporalMarkerOffset(0.5, ()-> {
+                            robit.outtake.setTargetLiftPos(outtake.liftPos.UP);
                         })
                         .splineTo(hubPose.vec(), hubPose.getHeading())
                         .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
-
-                            //robit.outtake.setOuttake(outtake.outtakePos.OUT_OPEN);
+                            robit.outtake.setOuttake(outtake.outtakePos.OUT_OPEN);
                         })
-                        .waitSeconds(1)
+                        .waitSeconds(0.5)
                         .UNSTABLE_addTemporalMarkerOffset(2, ()-> {
-                            //robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
-                            //robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
-                            //put down slides & turn on intake
+                            robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
+                            robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
                         })
                         .setReversed(false)
-                        .splineTo(new Vector2d(-60, -35), Math.toRadians(135))
+                        .splineTo(new Vector2d(-60, -35), Math.toRadians(270))
                         .build()
         );
 

@@ -35,9 +35,9 @@ public class teleop extends LinearOpMode {
             robit.intake.setMotorPower(gamepad1.left_trigger - gamepad1.right_trigger);
 
             if (gamepad1.left_bumper ) {
-                speeeed = 0.5;
+                speeeed = 0.3;
             } else if (gamepad1.right_bumper) {
-                speeeed = 1;
+                speeeed = 0.8;
             }
             if (gamepad1.dpad_up) {
                 robit.duck.spinDuck();
