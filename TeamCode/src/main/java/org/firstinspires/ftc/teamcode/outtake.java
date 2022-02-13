@@ -15,17 +15,17 @@ public class outtake {
 
     public static double kp = 0.003;
     public static double bottom = 0;
-    public static double mid = 240;
+    public static double mid = 300;
     public static double up = 630;
 
-    public static double inPivot = 0.25;
+    public static double inPivot = 0.2;
     public static double outPivot = 0.8;
     public static double inHoriz = 1;
-    public static double outHoriz = 0.3;
-    public static double openClaw = 0.85;
-    public static double closedClaw = 0.6;
+    public static double outHoriz = 0;
+    public static double openClaw = 1;
+    public static double closedClaw = 0.5;
 
-    public static int timeBetweenSTART_PIVOT = 100;
+    public static int timeBetweenSTART_PIVOT = 300;
     public static int MS_between_presses = 500;
 
     //lift
@@ -179,6 +179,7 @@ public class outtake {
         currentPos = pos;
         switch (pos) {
             case IN_OPEN:
+
                 outtakePivot.setPosition(inPivot);
                 outtakeClaw.setPosition(openClaw);
                 outtakeHoriz.setPosition(inHoriz);
@@ -189,6 +190,8 @@ public class outtake {
                 outtakeHoriz.setPosition(inHoriz);
                 break;
             case OUT_CLOSED_START:
+                out_closed_start_time = System.currentTimeMillis();
+                outtakePivot.setPosition(inPivot);
                 outtakeClaw.setPosition(closedClaw);
                 outtakeHoriz.setPosition(outHoriz);
                 break;

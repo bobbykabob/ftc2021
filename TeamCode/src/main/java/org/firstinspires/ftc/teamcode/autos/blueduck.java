@@ -72,7 +72,7 @@ public class blueduck extends LinearOpMode {
                             robit.intake.setMotorPower(0);
                             robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
                         })
-                        .UNSTABLE_addTemporalMarkerOffset(4, ()-> {
+                        .UNSTABLE_addTemporalMarkerOffset(3, ()-> {
                             robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED_START);
                         })
                         .splineTo(new Vector2d(-58, 30), Math.toRadians(270))
@@ -85,12 +85,12 @@ public class blueduck extends LinearOpMode {
                             robit.outtake.setOuttake(outtake.outtakePos.OUT_OPEN);
                         })
                         .waitSeconds(0.5)
-                        .UNSTABLE_addTemporalMarkerOffset(2, ()-> {
+                        .UNSTABLE_addTemporalMarkerOffset(0.5, ()-> {
                             robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
                             robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
                         })
                         .setReversed(false)
-                        .splineTo(new Vector2d(-60, 35), Math.toRadians(90))
+                        .splineTo(new Vector2d(-60, 45), Math.toRadians(90))
                         .build()
         );
 

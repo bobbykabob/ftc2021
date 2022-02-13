@@ -8,13 +8,15 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
 
 /*
  * This is a simple routine to test translational drive capabilities.
  */
-@Disabled
+@TeleOp
+@Config
 public class StraightTest extends LinearOpMode {
     public static double DISTANCE = 60; // in
 

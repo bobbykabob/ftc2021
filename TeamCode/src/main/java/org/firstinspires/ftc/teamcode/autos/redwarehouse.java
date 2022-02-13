@@ -41,7 +41,7 @@ public class redwarehouse extends LinearOpMode {
 
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.5, ()-> {
-                    robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED_PIVOT);
+                    robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED_START);
 
                 })
 
@@ -66,12 +66,12 @@ public class redwarehouse extends LinearOpMode {
                     //put lift down and put servos back
                     robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
                 })
-                .splineTo(new Vector2d(20, -66), Math.toRadians(0))
+                .splineTo(new Vector2d(20, -68), Math.toRadians(0))
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                     robit.intake.setMotorPower(1);
 
                 })
-                .splineTo(new Vector2d(50, -66), Math.toRadians(0))
+                .splineTo(new Vector2d(50, -68), Math.toRadians(0))
 
                 .build();
 
@@ -95,12 +95,12 @@ public class redwarehouse extends LinearOpMode {
                                 robit.intake.setMotorPower(-1);
                                 robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
                             })
-                            .splineTo(new Vector2d(20, -66), Math.toRadians(180))
-                            .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                            .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                                 //put cube in
                                 robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED_START);
                             })
-                            .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+                            .splineTo(new Vector2d(20, -68), Math.toRadians(180))
+                            .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                                 //put cube in
                                 robit.intake.setMotorPower(0);
                                 robit.outtake.setTargetLiftPos(outtake.liftPos.UP);
@@ -118,12 +118,12 @@ public class redwarehouse extends LinearOpMode {
                                 robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
                             })
                             .setReversed(false)
-                            .splineTo(new Vector2d(20, -66), Math.toRadians(0))
+                            .splineTo(new Vector2d(20, -68), Math.toRadians(0))
                             .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                                 //turn intake on
                                 robit.intake.setMotorPower(1);
                             })
-                            .splineTo(new Vector2d(50, -66), Math.toRadians(0))
+                            .splineTo(new Vector2d(50, -68), Math.toRadians(0))
                             .build());
                 }
 

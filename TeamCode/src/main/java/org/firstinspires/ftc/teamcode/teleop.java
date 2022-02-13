@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
 
 public class teleop extends LinearOpMode {
 
-    public static double deltaY = -0.5;
+    public static double deltaY = 0.1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -46,12 +46,32 @@ public class teleop extends LinearOpMode {
             } else {
                 robit.duck.stop();
             }
+            double gamepadY;
+            if (gamepad1.left_stick_y < 0) {
+                //move forward
+                gamepadY = Math.cbrt(Math.abs(gamepad1.left_stick_y)) * speeeed;
+                telemetry.addData("prevY", prevY);
+                telemetry.addData("gamepadY", gamepadY);
 
-            double gamepadY = -gamepad1.left_stick_y * speeeed;
 
-            if ((gamepadY - prevY) < deltaY) {
-                gamepadY = deltaY;
+            } else {
+                //move backward
+                gamepadY = -Math.cbrt(Math.abs(gamepad1.left_stick_y)) * speeeed;
             }
+
+            //my brain hurts, no more work for now
+
+            double accel = gamepadY - prevY;
+            if (accel < 0) {
+                if ((prevY - gamepadY) > deltaY) {
+                    telemetry.addData("running", gamepadY);
+                    gamepadY = prevY - deltaY;
+                }
+            }
+            prevY = gamepadY;
+
+
+
 
             drive.setWeightedDrivePower(
                     new Pose2d(
@@ -60,20 +80,18 @@ public class teleop extends LinearOpMode {
                             -gamepad1.right_stick_x
                     )
             );
-            prevY = gamepadY;
 
-
-            if (gamepad1.y) {
+            if (gamepad1.y || gamepad2.y) {
                 robit.outtake.setTargetLiftPos(outtake.liftPos.UP);
-            } else if (gamepad1.x) {
+            } else if (gamepad1.x || gamepad2.x) {
                 robit.outtake.setTargetLiftPos(outtake.liftPos.MID);
-            } else if (gamepad1.a) {
+            } else if (gamepad1.a || gamepad2.a) {
                 robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
             }
 
-            if (gamepad1.dpad_left) {
+            if (gamepad1.dpad_left || gamepad2.dpad_left) {
                 robit.outtake.iterateOuttakeBackward();
-            } else if (gamepad1.dpad_right) {
+            } else if (gamepad1.dpad_right || gamepad2.dpad_right) {
                 robit.outtake.iterateOuttakeForward();
             }
 

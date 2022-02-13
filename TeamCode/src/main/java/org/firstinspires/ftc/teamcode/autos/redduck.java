@@ -18,7 +18,7 @@ public class redduck extends LinearOpMode {
 
         SampleTankDrive drive = new SampleTankDrive(hardwareMap);
         Pose2d startPose = new Pose2d(-36, -66, Math.toRadians(90));
-        Pose2d hubPose = new Pose2d(-30, -24, Math.toRadians(0));
+        Pose2d hubPose = new Pose2d(-30, -32, Math.toRadians(0));
 
         drive.setPoseEstimate(startPose);
         while (!isStarted()) {

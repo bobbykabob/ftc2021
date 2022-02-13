@@ -25,18 +25,18 @@ public class TSEpipeline extends OpenCvPipeline {
     public static double lowerValues1 = 0;
     public static double lowerValues2 = 0;
     public static double upperValues0 = 255;
-    public static double upperValues1 = 110;
+    public static double upperValues1 = 120;
     public static double upperValues2 = 255;
     private double lowerValues[] = {lowerValues0, lowerValues1, lowerValues2};
     private double upperValues[] = {upperValues0, upperValues1, upperValues2};
 
-    public static double minArea = 500;
+    public static double minArea = 200;
 
     private Mat mat = new Mat();
     private Mat ret = new Mat();
 
     private Rect maxRect = new Rect();
-    public static int HORIZON = 110;
+    public static int HORIZON = 115;
     public static double minRatio = 0.5;
 
 
