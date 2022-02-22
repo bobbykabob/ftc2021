@@ -39,13 +39,20 @@ public class outtake {
     }
 
     public enum outtakePos {
-        IN_OPEN,
+        IN_OPEN_START,
+        IN_OPEN_END,
         IN_CLOSED,
         OUT_CLOSED_START,
         OUT_CLOSED_PIVOT,
         OUT_OPEN,
     }
 
+    private enum outtakedirection {
+        forward,
+        backward,
+        none
+    }
+    private static outtakedirection outtakeDirection;
     private liftPos targetLiftPos;
     private DcMotor lift1;
     private DcMotor lift2;
@@ -56,8 +63,8 @@ public class outtake {
     private HardwareMap hw;
 
 
-    public outtakePos currentPos = outtakePos.IN_OPEN;
-    private long out_closed_start_time = System.currentTimeMillis();
+    public outtakePos currentPos = outtakePos.IN_OPEN_START;
+    private long start_time = System.currentTimeMillis();
     private long prevClick = System.currentTimeMillis();
     public outtake(HardwareMap ahw) {
         targetLiftPos = liftPos.BOTTOM;
@@ -98,13 +105,36 @@ public class outtake {
 
 
         //outtake update
-        if (currentPos == outtakePos.OUT_CLOSED_START) {
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - out_closed_start_time > timeBetweenSTART_PIVOT) {
-                currentPos = outtakePos.OUT_CLOSED_PIVOT;
-                setOuttake(currentPos);
-            }
+        if (outtakeDirection == outtakedirection.forward) {
+            if (currentPos == outtakePos.OUT_CLOSED_START) {
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - start_time > timeBetweenSTART_PIVOT) {
+                    currentPos = outtakePos.OUT_CLOSED_PIVOT;
+                    setOuttake(currentPos);
+                }
 
+            } else if (currentPos == outtakePos.IN_OPEN_START) {
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - start_time > timeBetweenSTART_PIVOT) {
+                    currentPos = outtakePos.IN_OPEN_END;
+                    setOuttake(currentPos);
+                }
+            }
+        } else if (outtakeDirection == outtakedirection.backward) {
+            if (currentPos == outtakePos.OUT_CLOSED_START) {
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - start_time > timeBetweenSTART_PIVOT) {
+                    currentPos = outtakePos.IN_CLOSED;
+                    setOuttake(currentPos);
+                }
+
+            } else if (currentPos == outtakePos.IN_OPEN_START) {
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - start_time > timeBetweenSTART_PIVOT) {
+                    currentPos = outtakePos.OUT_OPEN;
+                    setOuttake(currentPos);
+                }
+            }
         }
 
     }
@@ -129,23 +159,28 @@ public class outtake {
 
     public void iterateOuttakeForward() {
         if ((System.currentTimeMillis() - prevClick) < MS_between_presses) return;
+        outtakeDirection = outtakedirection.forward;
         prevClick = System.currentTimeMillis();
         switch (currentPos) {
-            case IN_OPEN:
+            case IN_OPEN_START:
+                currentPos = outtakePos.IN_CLOSED;
+                break;
+            case IN_OPEN_END:
                 currentPos = outtakePos.IN_CLOSED;
                 break;
             case IN_CLOSED:
-                out_closed_start_time = System.currentTimeMillis();
+                start_time = System.currentTimeMillis();
                 currentPos = outtakePos.OUT_CLOSED_START;
                 break;
-                    case OUT_CLOSED_START:
+            case OUT_CLOSED_START:
                 currentPos = outtakePos.OUT_OPEN;
                 break;
             case OUT_CLOSED_PIVOT:
                 currentPos = outtakePos.OUT_OPEN;
                 break;
             case OUT_OPEN:
-                currentPos = outtakePos.IN_OPEN;
+                start_time = System.currentTimeMillis();
+                currentPos = outtakePos.IN_OPEN_START;
                 break;
         }
         setOuttake(currentPos);
@@ -153,23 +188,27 @@ public class outtake {
 
     public void iterateOuttakeBackward() {
         if ((System.currentTimeMillis() - prevClick) < MS_between_presses) return;
+        outtakeDirection = outtakedirection.backward;
         prevClick = System.currentTimeMillis();
+        start_time = System.currentTimeMillis();
         switch (currentPos) {
-            case IN_OPEN:
-                currentPos = outtakePos.OUT_OPEN;
+            case IN_OPEN_START:
+                currentPos = outtakePos.OUT_CLOSED_PIVOT;
+                break;
+            case IN_OPEN_END:
+                currentPos = outtakePos.IN_OPEN_START;
                 break;
             case IN_CLOSED:
-                out_closed_start_time = System.currentTimeMillis();
-                currentPos = outtakePos.IN_OPEN;
+                currentPos = outtakePos.IN_OPEN_END;
                 break;
             case OUT_CLOSED_START:
-                currentPos = outtakePos.IN_CLOSED;
+                currentPos = outtakePos.IN_OPEN_END;
                 break;
             case OUT_CLOSED_PIVOT:
-                currentPos = outtakePos.IN_CLOSED;
+                currentPos = outtakePos.OUT_CLOSED_START;
                 break;
             case OUT_OPEN:
-                currentPos = outtakePos.OUT_CLOSED_START;
+                currentPos = outtakePos.OUT_CLOSED_PIVOT;
                 break;
         }
         setOuttake(currentPos);
@@ -178,12 +217,18 @@ public class outtake {
 
     public void setOuttake(outtakePos pos) {
         currentPos = pos;
+        start_time = System.currentTimeMillis();
         switch (pos) {
-            case IN_OPEN:
-
+            case IN_OPEN_START:
+                outtakePivot.setPosition(inPivot);
+                outtakeClaw.setPosition(closedClaw);
+                outtakeHoriz.setPosition(inHoriz);
+                setTargetLiftPos(liftPos.BOTTOM);
+            case IN_OPEN_END:
                 outtakePivot.setPosition(inPivot);
                 outtakeClaw.setPosition(openClaw);
                 outtakeHoriz.setPosition(inHoriz);
+                setTargetLiftPos(liftPos.BOTTOM);
                 break;
             case IN_CLOSED:
                 outtakePivot.setPosition(inPivot);
@@ -191,7 +236,6 @@ public class outtake {
                 outtakeHoriz.setPosition(inHoriz);
                 break;
             case OUT_CLOSED_START:
-                out_closed_start_time = System.currentTimeMillis();
                 outtakePivot.setPosition(inPivot);
                 outtakeClaw.setPosition(closedClaw);
                 outtakeHoriz.setPosition(outHoriz);
@@ -200,6 +244,7 @@ public class outtake {
                 outtakePivot.setPosition(outPivot);
                 outtakeClaw.setPosition(closedClaw);
                 outtakeHoriz.setPosition(outHoriz);
+                setTargetLiftPos(liftPos.UP);
                 break;
             case OUT_OPEN:
                 outtakePivot.setPosition(outPivot);

@@ -27,7 +27,7 @@ public class redwarehouse extends LinearOpMode {
             if (gamepad1.dpad_left) {
                 robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
             } else if (gamepad1.dpad_right) {
-                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
+                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN_START);
             }
             telemetry.addData("pos", robit.camera.tsepipeline.getTSEpos());
             telemetry.update();
@@ -60,7 +60,7 @@ public class redwarehouse extends LinearOpMode {
                 .waitSeconds(0.5)
                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
                     //put cube in
-                    robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
+                    robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN_START);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(1, ()-> {
                     //put lift down and put servos back
@@ -115,7 +115,7 @@ public class redwarehouse extends LinearOpMode {
                             .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                                 //put lift down and put servos back
                                 robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
-                                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
+                                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN_START);
                             })
                             .setReversed(false)
                             .splineTo(new Vector2d(20, -68), Math.toRadians(0))
