@@ -18,17 +18,18 @@ public class outtake {
     public static double mid = 300;
     public static double up = 630;
 
-    public static double inPivot = 0.2;
-    public static double outPivot = 0.8;
-    public static double inHoriz = 1;
-    public static double outHoriz = 0;
-    public static double openClaw = 1;
+    public static double inPivot = 0.35;
+    public static double outPivot = 0.9;
+    public static double inHoriz = 0.08;
+    public static double outHoriz = 0.4;
+    public static double openClaw = 0.8;
     public static double closedClaw = 0.5;
 
     public static int timeBetweenSTART_PIVOT = 300;
-    public static int MS_between_presses = 500;
+    public static int MS_between_presses = 250;
 
     //lift
+
     public static double p;
 
     public enum liftPos {

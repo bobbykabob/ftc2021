@@ -16,7 +16,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
 
 public class teleop extends LinearOpMode {
 
-    public static double deltaY = 0.1;
+    public static double deltaY = 0.075;
+    public static double accelTolerance = 0.05;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -31,8 +32,9 @@ public class teleop extends LinearOpMode {
 
         double speeeed = 1;
         double prevY = 0;
+        boolean dtforward = false;
         while (!isStopRequested()) {
-            robit.intake.setMotorPower(gamepad1.left_trigger - gamepad1.right_trigger);
+            robit.intake.setMotorPower((1.5) * gamepad1.left_trigger - gamepad1.right_trigger -0.5);
 
             if (gamepad1.left_bumper ) {
                 speeeed = 0.3;
@@ -49,27 +51,44 @@ public class teleop extends LinearOpMode {
             double gamepadY;
             if (gamepad1.left_stick_y < 0) {
                 //move forward
-                gamepadY = Math.cbrt(Math.abs(gamepad1.left_stick_y)) * speeeed;
+                gamepadY = Math.pow(Math.abs(gamepad1.left_stick_y), 2) * speeeed;
                 telemetry.addData("prevY", prevY);
                 telemetry.addData("gamepadY", gamepadY);
 
 
             } else {
                 //move backward
-                gamepadY = -Math.cbrt(Math.abs(gamepad1.left_stick_y)) * speeeed;
+                gamepadY = -Math.pow(Math.abs(gamepad1.left_stick_y), 2) * speeeed;
             }
 
-            //my brain hurts, no more work for now
 
-            double accel = gamepadY - prevY;
-            if (accel < 0) {
-                if ((prevY - gamepadY) > deltaY) {
-                    telemetry.addData("running", gamepadY);
+
+            //g = 1, p = 0
+            //g= -1, p = 0
+            //g = 0, p = 1
+            //g = 0, p= -1
+            if (prevY < 0) {
+                if (prevY - gamepadY < 0) {
+                    gamepadY = prevY + deltaY;
+                }
+            } else if (prevY > 0) {
+                if (prevY - gamepadY > 0) {
                     gamepadY = prevY - deltaY;
                 }
             }
+
+
+
             prevY = gamepadY;
 
+
+            double turn = -gamepad1.right_stick_x;
+
+            if (turn > 0) {
+                turn = Math.pow(turn,2);
+            }  else {
+                turn = - Math.pow(Math.abs(turn), 2);
+            }
 
 
 
@@ -77,7 +96,7 @@ public class teleop extends LinearOpMode {
                     new Pose2d(
                             gamepadY,
                             0,
-                            -gamepad1.right_stick_x
+                            turn
                     )
             );
 
