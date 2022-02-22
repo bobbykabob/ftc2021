@@ -26,7 +26,7 @@ public class redduck extends LinearOpMode {
             if (gamepad1.dpad_left) {
                 robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
             } else if (gamepad1.dpad_right) {
-                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
+                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN_START);
             }
             telemetry.addData("pos", robit.camera.tsepipeline.getTSEpos());
             telemetry.update();
@@ -56,7 +56,7 @@ public class redduck extends LinearOpMode {
                         })
                         .waitSeconds(1)
                         .UNSTABLE_addTemporalMarkerOffset(2, ()-> {
-                            robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
+                            robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN_START);
                             robit.intake.setMotorPower(1);
                         })
 
