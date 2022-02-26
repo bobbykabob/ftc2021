@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.outtake.outtakePos.IN_CLOSED;
-import static org.firstinspires.ftc.teamcode.outtake.outtakePos.OUT_OPEN;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -14,7 +11,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
 @TeleOp
 @Config
 
-public class teleop extends LinearOpMode {
+public class newteleop extends LinearOpMode {
 
     public static double deltaY = 0.075;
     public static double accelTolerance = 0.05;
@@ -34,13 +31,14 @@ public class teleop extends LinearOpMode {
         double prevY = 0;
         boolean dtforward = false;
         while (!isStopRequested()) {
-            robit.intake.setMotorPower((1.5) * gamepad1.left_trigger - gamepad1.right_trigger -0.5);
-
-            if (gamepad1.left_bumper ) {
+            if (gamepad1.left_bumper) {
                 speeeed = 0.3;
             } else if (gamepad1.right_bumper) {
-                speeeed = 0.8;
+                speeeed = 1;
             }
+            robit.intake.setMotorPower(gamepad1.left_trigger - gamepad1.right_trigger);
+
+
             if (gamepad1.dpad_up) {
                 robit.duck.spinDuck();
             } else if (gamepad1.dpad_down ) {
@@ -108,9 +106,9 @@ public class teleop extends LinearOpMode {
                 robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
             }
 
-            if (gamepad1.dpad_left || gamepad2.dpad_left) {
+            if (gamepad1.left_stick_button || gamepad2.dpad_left) {
                 robit.outtake.iterateOuttakeBackward();
-            } else if (gamepad1.dpad_right || gamepad2.dpad_right) {
+            } else if (gamepad1.right_stick_button || gamepad2.dpad_right) {
                 robit.outtake.iterateOuttakeForward();
             }
 
