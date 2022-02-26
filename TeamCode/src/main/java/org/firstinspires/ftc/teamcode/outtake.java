@@ -72,9 +72,11 @@ public class outtake {
         outtakeClaw = hw.get(Servo.class, "outtakeClaw");
         outtakeHoriz = hw.get(Servo.class, "outtakeHoriz");
         lift1 = hw.get(DcMotor.class, "lift1");
+
         lift2 = hw.get(DcMotor.class, "lift2");
         lift1.setDirection(DcMotorSimple.Direction.REVERSE);
         lift1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         lift2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
