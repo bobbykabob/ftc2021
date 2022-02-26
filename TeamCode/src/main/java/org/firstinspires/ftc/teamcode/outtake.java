@@ -24,6 +24,7 @@ public class outtake {
     public static double outHoriz = 0.4;
     public static double openClaw = 0.8;
     public static double closedClaw = 0.5;
+    public static double minP = -0.1;
 
     public static int timeBetweenSTART_PIVOT = 300;
     public static int MS_between_presses = 250;
@@ -45,6 +46,7 @@ public class outtake {
         OUT_CLOSED_START,
         OUT_CLOSED_PIVOT,
         OUT_OPEN,
+        IN_OPEN_UP
     }
 
     private enum outtakedirection {
@@ -101,6 +103,9 @@ public class outtake {
 
         double averagePos = (getCurrentPosition().get(0) + getCurrentPosition().get(1))/2;
         p = kp * (targetPos - averagePos);
+        if (p < minP) {
+            p = minP;
+        }
         setLiftMotorPower(p);
 
 
@@ -160,7 +165,9 @@ public class outtake {
     public void iterateOuttakeForward() {
         if ((System.currentTimeMillis() - prevClick) < MS_between_presses) return;
         outtakeDirection = outtakedirection.forward;
+
         prevClick = System.currentTimeMillis();
+        start_time = System.currentTimeMillis();
         switch (currentPos) {
             case IN_OPEN_START:
                 currentPos = outtakePos.IN_CLOSED;
@@ -179,7 +186,9 @@ public class outtake {
                 currentPos = outtakePos.OUT_OPEN;
                 break;
             case OUT_OPEN:
-                start_time = System.currentTimeMillis();
+                currentPos = outtakePos.IN_OPEN_UP;
+                break;
+            case IN_OPEN_UP:
                 currentPos = outtakePos.IN_OPEN_START;
                 break;
         }
@@ -193,7 +202,7 @@ public class outtake {
         start_time = System.currentTimeMillis();
         switch (currentPos) {
             case IN_OPEN_START:
-                currentPos = outtakePos.OUT_CLOSED_PIVOT;
+                currentPos = outtakePos.IN_OPEN_UP;
                 break;
             case IN_OPEN_END:
                 currentPos = outtakePos.IN_OPEN_START;
@@ -210,6 +219,8 @@ public class outtake {
             case OUT_OPEN:
                 currentPos = outtakePos.OUT_CLOSED_PIVOT;
                 break;
+            case IN_OPEN_UP:
+                currentPos = outtakePos.OUT_OPEN;
         }
         setOuttake(currentPos);
 
@@ -251,6 +262,10 @@ public class outtake {
                 outtakeClaw.setPosition(openClaw);
                 outtakeHoriz.setPosition(outHoriz);
                 break;
+            case IN_OPEN_UP:
+                outtakePivot.setPosition(inPivot);
+                outtakeClaw.setPosition(openClaw);
+                outtakeHoriz.setPosition(inHoriz);
         }
 
     }
