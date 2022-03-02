@@ -58,13 +58,16 @@ public class SampleTankDrive extends TankDrive {
 
 
     //was 10, 0, 0
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(6, 0, 1.2);
+
+
+
 
     public static double VX_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
-    public static double b = 0.02;
-    public static double zeta = 0.5;
+    public static double b = 0.0101;
+    public static double zeta = 1;
     private TrajectorySequenceRunner trajectorySequenceRunner;
 
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
@@ -75,6 +78,13 @@ public class SampleTankDrive extends TankDrive {
     private BNO055IMU imu;
 
     private VoltageSensor batteryVoltageSensor;
+
+
+    @Override
+    public void setDrivePower(@NonNull Pose2d drivePower) {
+        List<Double> powers = TankKinematics.robotToWheelVelocities(drivePower, TRACK_WIDTH);
+        setMotorPowers(powers.get(0), powers.get(1));
+    }
 
     public SampleTankDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH);

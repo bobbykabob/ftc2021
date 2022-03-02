@@ -17,8 +17,8 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
-//import com.acmerobotics.dashboard.config.Config;
-//@Config
+import com.acmerobotics.dashboard.config.Config;
+@Config
 public class TSEpipeline extends OpenCvPipeline {
 
     public static double lowerValues0 = 0;

@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
  * exercise is to ascertain whether the localizer has been configured properly (note: the pure
  * encoder localizer heading may be significantly off if the track width has not been tuned).
  */
-@Disabled
+@TeleOp
 public class LocalizationTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

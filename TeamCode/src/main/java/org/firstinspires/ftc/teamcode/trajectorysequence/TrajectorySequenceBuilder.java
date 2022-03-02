@@ -433,6 +433,9 @@ public class TrajectorySequenceBuilder {
     public TrajectorySequenceBuilder turn(double angle) {
         return turn(angle, currentTurnConstraintMaxAngVel, currentTurnConstraintMaxAngAccel);
     }
+    public TrajectorySequenceBuilder turnTo(double angle) {
+        return turn(angle - lastPose.getHeading(), currentTurnConstraintMaxAngVel, currentTurnConstraintMaxAngAccel);
+    }
 
     public TrajectorySequenceBuilder turn(double angle, double maxAngVel, double maxAngAccel) {
         pushPath();

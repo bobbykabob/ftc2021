@@ -18,7 +18,7 @@ public class blueduck extends LinearOpMode {
 
         SampleTankDrive drive = new SampleTankDrive(hardwareMap);
         Pose2d startPose = new Pose2d(-36, 66, Math.toRadians(270));
-        Pose2d hubPose = new Pose2d(-30, 24, Math.toRadians(0));
+        Pose2d hubPose = new Pose2d(-25, 24, Math.toRadians(0));
 
         drive.setPoseEstimate(startPose);
 
@@ -49,7 +49,7 @@ public class blueduck extends LinearOpMode {
                             robit.duck.stop();
                             robit.setLiftfromTSE(pos);
                         })
-                        .splineTo(new Vector2d(-58, 30), Math.toRadians(270))
+                        .splineTo(new Vector2d(-58, 30), Math.toRadians(-45))
                         .splineTo(hubPose.vec(), hubPose.getHeading())
                         .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
                             robit.outtake.setOuttake(outtake.outtakePos.OUT_OPEN);
@@ -84,7 +84,7 @@ public class blueduck extends LinearOpMode {
                         .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
                             robit.outtake.setOuttake(outtake.outtakePos.OUT_OPEN);
                         })
-                        .waitSeconds(0.5)
+                        .waitSeconds(1)
                         .UNSTABLE_addTemporalMarkerOffset(0.5, ()-> {
                             robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
                             robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);

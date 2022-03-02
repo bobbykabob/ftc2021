@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @TeleOp
 @Config
@@ -14,12 +15,35 @@ import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
 public class newteleop extends LinearOpMode {
 
     public static double deltaY = 0.075;
-    public static double accelTolerance = 0.05;
+    public static double gamepadToerlance = 0.1;
+    public static double turnMultipler = 0.5;
+    enum driveState {
+        teleOp,
+        back,
+        forward,
+        running
+    }
+    driveState drivestate = driveState.teleOp;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
 
+
+
+        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
+        Pose2d startPose = new Pose2d(36, 66, Math.toRadians(0));
+        Pose2d hubPose = new Pose2d(-12, 36, Math.toRadians(-90));
+
+        TrajectorySequence back = drive.trajectorySequenceBuilder(startPose)
+                .setReversed(true)
+                .back(10)
+                .splineTo(hubPose.vec(), hubPose.getHeading())
+                .build();
+        TrajectorySequence forward = drive.trajectorySequenceBuilder(new Pose2d(hubPose.vec(), hubPose.getHeading() + Math.toRadians(180)))
+                .setReversed(false)
+                .turn(Math.toRadians(45))
+                .splineTo(startPose.vec(), startPose.getHeading())
+                .build();
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
@@ -32,10 +56,12 @@ public class newteleop extends LinearOpMode {
         boolean dtforward = false;
         while (!isStopRequested()) {
             if (gamepad1.left_bumper) {
-                speeeed = 0.3;
+                speeeed = 0.5;
             } else if (gamepad1.right_bumper) {
                 speeeed = 1;
             }
+
+
             robit.intake.setMotorPower(gamepad1.left_trigger - gamepad1.right_trigger);
 
 
@@ -58,6 +84,7 @@ public class newteleop extends LinearOpMode {
                 //move backward
                 gamepadY = -Math.pow(Math.abs(gamepad1.left_stick_y), 2) * speeeed;
             }
+
 
 
 
@@ -88,15 +115,47 @@ public class newteleop extends LinearOpMode {
                 turn = - Math.pow(Math.abs(turn), 2);
             }
 
+            if (gamepadY < gamepadToerlance && gamepadY > -gamepadToerlance) {
+                gamepadY = 0;
+            }
 
+            if (turn < gamepadToerlance && turn > -gamepadToerlance) {
+                turn =0;
+            }
 
-            drive.setWeightedDrivePower(
-                    new Pose2d(
-                            gamepadY,
-                            0,
-                            turn
-                    )
-            );
+            if (gamepad1.dpad_left) {
+                drivestate = driveState.back;
+            } else if (gamepad1.dpad_right) {
+                drivestate = driveState.forward;
+            }
+            if (gamepadY != 0 || turn != 0) {
+                drivestate = driveState.teleOp;
+            }
+            switch (drivestate) {
+                case teleOp:
+                    drive.setWeightedDrivePower(
+                            new Pose2d(
+                                    gamepadY,
+                                    0,
+                                    turn * turnMultipler
+                            )
+                    );
+                    break;
+                case back:
+                    drive.setPoseEstimate(startPose);
+                    drive.followTrajectorySequenceAsync(back);
+                    drivestate = driveState.running;
+                    break;
+                case forward:
+                    drive.setPoseEstimate(new Pose2d(hubPose.vec(), hubPose.getHeading() + Math.toRadians(180)));
+                    drive.followTrajectorySequenceAsync(forward);
+                    drivestate = driveState.running;
+                case running:
+                    if (!drive.isBusy()) {
+                        drivestate = driveState.teleOp;
+                    }
+                    break;
+            }
 
             if (gamepad1.y || gamepad2.y) {
                 robit.outtake.setTargetLiftPos(outtake.liftPos.UP);
