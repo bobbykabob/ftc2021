@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
@@ -30,7 +31,7 @@ public class newteleop extends LinearOpMode {
 
 
 
-        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPose = new Pose2d(36, 66, Math.toRadians(0));
         Pose2d hubPose = new Pose2d(-12, 36, Math.toRadians(-90));
 
@@ -57,8 +58,23 @@ public class newteleop extends LinearOpMode {
         while (!isStopRequested()) {
             if (gamepad1.left_bumper) {
                 speeeed = 0.5;
-            } else if (gamepad1.right_bumper) {
+            } else if (gamepad1.right_bumper)  {
                 speeeed = 1;
+            }
+            if (gamepad1.left_stick_button || gamepad2.dpad_left) {
+                if (robit.outtake.currentPos == outtake.outtakePos.OUT_OPEN) {
+                    speeeed = 0.5;
+                } else if (robit.outtake.currentPos == outtake.outtakePos.IN_OPEN) {
+                    speeeed = 1;
+                }
+                robit.outtake.iterateOuttakeBackward();
+            } else if (gamepad1.right_stick_button || gamepad2.dpad_right) {
+                if (robit.outtake.currentPos == outtake.outtakePos.OUT_OPEN) {
+                    speeeed = 0.5;
+                } else if (robit.outtake.currentPos == outtake.outtakePos.IN_OPEN) {
+                    speeeed = 1;
+                }
+                robit.outtake.iterateOuttakeForward();
             }
 
 
@@ -73,51 +89,16 @@ public class newteleop extends LinearOpMode {
                 robit.duck.stop();
             }
             double gamepadY;
-            if (gamepad1.left_stick_y < 0) {
-                //move forward
-                gamepadY = Math.pow(Math.abs(gamepad1.left_stick_y), 2) * speeeed;
-                telemetry.addData("prevY", prevY);
-                telemetry.addData("gamepadY", gamepadY);
+            gamepadY = -gamepad1.left_stick_y;
 
 
-            } else {
-                //move backward
-                gamepadY = -Math.pow(Math.abs(gamepad1.left_stick_y), 2) * speeeed;
-            }
-
-
-
-
-            //g = 1, p = 0
-            //g= -1, p = 0
-            //g = 0, p = 1
-            //g = 0, p= -1
-            if (prevY < 0) {
-                if (prevY - gamepadY < 0) {
-                    gamepadY = prevY + deltaY;
-                }
-            } else if (prevY > 0) {
-                if (prevY - gamepadY > 0) {
-                    gamepadY = prevY - deltaY;
-                }
-            }
-
-
-
-            prevY = gamepadY;
 
 
             double turn = -gamepad1.right_stick_x;
 
-            if (turn > 0) {
-                turn = Math.pow(turn,2);
-            }  else {
-                turn = - Math.pow(Math.abs(turn), 2);
-            }
 
-            if (gamepadY < gamepadToerlance && gamepadY > -gamepadToerlance) {
-                gamepadY = 0;
-            }
+
+
 
             if (turn < gamepadToerlance && turn > -gamepadToerlance) {
                 turn =0;
@@ -135,9 +116,9 @@ public class newteleop extends LinearOpMode {
                 case teleOp:
                     drive.setWeightedDrivePower(
                             new Pose2d(
-                                    gamepadY,
-                                    0,
-                                    turn * turnMultipler
+                                    gamepadY * speeeed,
+                                    -gamepad1.left_stick_x * speeeed,
+                                    turn
                             )
                     );
                     break;
@@ -165,11 +146,6 @@ public class newteleop extends LinearOpMode {
                 robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
             }
 
-            if (gamepad1.left_stick_button || gamepad2.dpad_left) {
-                robit.outtake.iterateOuttakeBackward();
-            } else if (gamepad1.right_stick_button || gamepad2.dpad_right) {
-                robit.outtake.iterateOuttakeForward();
-            }
 
 
 

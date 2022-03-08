@@ -19,7 +19,7 @@ public class duck {
     public static double initalPower = 0.4;
     public static double endPower = 1;
     public static double MS_between_Powers = 900;
-    public static double MS_between_End = 500;
+    public static double MS_between_End = 300;
 
 
     private long startTime = System.currentTimeMillis();

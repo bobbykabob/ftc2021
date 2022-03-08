@@ -25,9 +25,9 @@ public class redwarehouse extends LinearOpMode {
         while (!isStarted()) {
             robit.intake.setMotorPower(gamepad1.left_trigger - gamepad1.right_trigger);
             if (gamepad1.dpad_left) {
-                robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
+                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
             } else if (gamepad1.dpad_right) {
-                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN_START);
+                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
             }
             telemetry.addData("pos", robit.camera.tsepipeline.getTSEpos());
             telemetry.update();
@@ -37,11 +37,11 @@ public class redwarehouse extends LinearOpMode {
 
         TrajectorySequence start = drive.trajectorySequenceBuilder(startPose)
                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
-                robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
+                //robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
 
                 })
                 .UNSTABLE_addTemporalMarkerOffset(0.5, ()-> {
-                    robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED_START);
+                    //robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED_START);
 
                 })
 
@@ -60,7 +60,7 @@ public class redwarehouse extends LinearOpMode {
                 .waitSeconds(0.5)
                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
                     //put cube in
-                    robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN_START);
+                    robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
                 })
                 .UNSTABLE_addTemporalMarkerOffset(1, ()-> {
                     //put lift down and put servos back
@@ -93,11 +93,11 @@ public class redwarehouse extends LinearOpMode {
                             .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
                                 //put slide up
                                 robit.intake.setMotorPower(-1);
-                                robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
+                                //robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
                             })
                             .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                                 //put cube in
-                                robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED_START);
+                                //robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED_START);
                             })
                             .splineTo(new Vector2d(20, -68), Math.toRadians(180))
                             .UNSTABLE_addTemporalMarkerOffset(0, () -> {
@@ -115,7 +115,7 @@ public class redwarehouse extends LinearOpMode {
                             .UNSTABLE_addTemporalMarkerOffset(1, () -> {
                                 //put lift down and put servos back
                                 robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
-                                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN_START);
+                                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
                             })
                             .setReversed(false)
                             .splineTo(new Vector2d(20, -68), Math.toRadians(0))

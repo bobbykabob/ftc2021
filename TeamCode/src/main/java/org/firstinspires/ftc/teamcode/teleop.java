@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.outtake.outtakePos.IN_CLOSED;
 import static org.firstinspires.ftc.teamcode.outtake.outtakePos.OUT_OPEN;
 
 import com.acmerobotics.dashboard.config.Config;

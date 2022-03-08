@@ -36,7 +36,6 @@ public class devauto extends LinearOpMode {
             currentTime = System.currentTimeMillis();
 
         }
-        robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
 
         currentTime = System.currentTimeMillis();
         startTime = currentTime;

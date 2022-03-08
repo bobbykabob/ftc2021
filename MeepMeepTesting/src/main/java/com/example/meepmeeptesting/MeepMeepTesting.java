@@ -35,12 +35,42 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setColorScheme(new ColorSchemeBlueDark())
                 .setDimensions(12, 12)
-                .setDriveTrainType(DriveTrainType.TANK)
+                .setDriveTrainType(DriveTrainType.MECANUM)
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 10)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(hubPose.vec(), hubPose.getHeading() + Math.toRadians(180)))
+                        drive.trajectorySequenceBuilder(startPose)
+                                .setReversed(true)
+                                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+                                    //put slide up
+
+                                })
+                                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
+                                    //put cube in
+
+                                })
+                                .splineTo(new Vector2d(20, 68), Math.toRadians(180))
+
+                                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                                    //put cube in
+
+                                })
+                                .splineTo(hubPose.vec(), hubPose.getHeading())
+                                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                                    //put cube in
+
+
+                                })
+                                .waitSeconds(1)
+                                .UNSTABLE_addTemporalMarkerOffset(1, () -> {
+                                    //put lift down and put servos back
+
+                                })
                                 .setReversed(false)
-                                .splineTo(startPose.vec(), startPose.getHeading())
+                                .splineTo(new Vector2d(20, 68), Math.toRadians(0))
+                                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+
+                                })
+                                .splineTo(new Vector2d(55, 68), Math.toRadians(0))
                                 .build()
                 );
 
