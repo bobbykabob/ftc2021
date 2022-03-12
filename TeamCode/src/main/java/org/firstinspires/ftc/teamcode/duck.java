@@ -51,6 +51,12 @@ public class duck {
         duck.setPower(initalPower);
     }
 
+    public void spinDuckPrimitive() {
+        duck.setPower(initalPower);
+    }
+    public void spinDuckOtherPrimitive() {
+        duck.setPower(-initalPower);
+    }
     public void spinDuckOther() {
         if (currentMode == duckMode.INITIAL) return;
         currentMode = duckMode.INITIAL;

@@ -25,7 +25,7 @@ public class teleop extends LinearOpMode {
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-        hardware robit = new hardware(hardwareMap);
+        hardware robit = new hardware(hardwareMap, hardware.color.BLUE);
 
         waitForStart();
 

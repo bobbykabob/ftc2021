@@ -14,15 +14,19 @@ public class outtake {
 
 
     public static double kp = 0.003;
+    public static double autobottom = 50;
     public static double bottom = 0;
-    public static double mid = 300;
+    public static double mid = 350;
     public static double up = 630;
 
     public static double openPivot = 0.55;
-    public static double closedPivot = 0;
+    public static double closedPivot = 0.25;
     public static double inHoriz = 0.08;
     public static double outHoriz = 0.4;
 
+    public static double tsePivot = 0.2;
+    public static double tseP = 0.0005;
+    public static double tsedelay = 500;
     public static double minP = -0.1;
 
     public static int MS_between_presses = 500;
@@ -32,6 +36,7 @@ public class outtake {
     public static double p;
 
     public enum liftPos {
+        AUTO_BOTTOM,
         BOTTOM,
         MID,
         UP
@@ -77,6 +82,9 @@ public class outtake {
 
         double targetPos;
         switch (targetLiftPos) {
+            case AUTO_BOTTOM:
+                targetPos = autobottom;
+                break;
             case BOTTOM:
                 targetPos = bottom;
                 break;
@@ -99,11 +107,12 @@ public class outtake {
         setLiftMotorPower(p);
 
 
-        if (System.currentTimeMillis() - start_time > 500 && currentPos == outtakePos.IN_OPEN) {
+        if (System.currentTimeMillis() - start_time > 750 && currentPos == outtakePos.IN_OPEN) {
             currentPos = outtakePos.IN_OPEN_SLIDE;
             setOuttake(currentPos);
         }
         //outtake update
+
 
 
     }
@@ -142,7 +151,6 @@ public class outtake {
                 break;
             case OUT_CLOSED:
                 currentPos = outtakePos.IN_OPEN;
-                start_time = System.currentTimeMillis();
                 break;
 
         }
@@ -155,6 +163,9 @@ public class outtake {
         prevClick = System.currentTimeMillis();
         switch (currentPos) {
             case IN_OPEN:
+                currentPos = outtakePos.OUT_CLOSED;
+                break;
+            case IN_OPEN_SLIDE:
                 currentPos = outtakePos.OUT_CLOSED;
                 break;
 
@@ -174,6 +185,7 @@ public class outtake {
         currentPos = pos;
         switch (pos) {
             case IN_OPEN:
+                start_time = System.currentTimeMillis();
                 outtakePivot.setPosition(openPivot);
                 outtakeHoriz.setPosition(inHoriz);
                 break;
@@ -192,6 +204,24 @@ public class outtake {
 
         }
 
+    }
+
+    public boolean activated = false;
+    private long tsestartTime;
+    public void tseMove() {
+        if (!activated) {
+            tsestartTime = System.currentTimeMillis();
+            activated = true;
+            outtakePivot.setPosition(tsePivot);
+            return;
+        }
+        if (System.currentTimeMillis() - tsestartTime < tsedelay) {
+            return;
+        }
+
+
+        outtakePivot.setPosition(tsePivot + ((openPivot - tsePivot) * Math.min((System.currentTimeMillis() - tsestartTime - tsedelay) * tseP, 1)));
+        return;
     }
 
 

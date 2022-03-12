@@ -5,9 +5,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.pipelines.TSEpipeline;
+
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 
 public class camera {
@@ -15,7 +17,13 @@ public class camera {
 
     HardwareMap hw;
     public TSEpipeline tsepipeline = new TSEpipeline();
-    public camera(HardwareMap hw) {
+
+    public camera(HardwareMap hw, hardware.color acolor) {
+        if (acolor == hardware.color.BLUE) {
+            TSEpipeline.color = 0;
+        } else if (acolor == hardware.color.RED) {
+            TSEpipeline.color = 1;
+        }
         this.hw = hw;
         int cameraMonitorViewId = hw.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hw.appContext.getPackageName());
         webcam = OpenCvCameraFactory.getInstance().createWebcam(hw.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);

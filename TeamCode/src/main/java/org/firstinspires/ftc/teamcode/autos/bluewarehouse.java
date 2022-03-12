@@ -5,7 +5,8 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.SampleTankDrive;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.hardware;
 import org.firstinspires.ftc.teamcode.outtake;
 import org.firstinspires.ftc.teamcode.pipelines.TSEpipeline;
@@ -13,14 +14,20 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Autonomous
 public class bluewarehouse extends LinearOpMode {
+
+    private enum cyclePos {
+        start,
+        finding,
+        out
+    }
+    private cyclePos cyclepos = cyclePos.start;
     @Override
     public void runOpMode() throws InterruptedException {
-        hardware robit = new hardware(hardwareMap);
+        hardware robit = new hardware(hardwareMap, hardware.color.BLUE);
 
-        SampleTankDrive drive = new SampleTankDrive(hardwareMap);
-
-        Pose2d startPose = new Pose2d(12, 66, Math.toRadians(270));
-        Pose2d hubPose = new Pose2d(-6, 42, Math.toRadians(270));
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPose = new Pose2d(12, 66, Math.toRadians(90));
+        Pose2d hubPose = new Pose2d(-16, 40, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
         while (!isStarted()) {
             robit.intake.setMotorPower(gamepad1.left_trigger - gamepad1.right_trigger);
@@ -36,42 +43,33 @@ public class bluewarehouse extends LinearOpMode {
 
 
         TrajectorySequence start = drive.trajectorySequenceBuilder(startPose)
-                .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
-                    //robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
-
-                })
-                .UNSTABLE_addTemporalMarkerOffset(0.5, ()-> {
-                    //robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED_START);
-
-                })
-
-                .splineTo(new Vector2d(0, 48), Math.toRadians(270))
-                .turn(Math.toRadians(160))
                 .setReversed(true)
                 .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
+                    robit.outtake.setOuttake(outtake.outtakePos.OUT_OPEN);
                     robit.setLiftfromTSE(pos);
                 })
-                .splineTo(hubPose.vec(), hubPose.getHeading())
-                .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
-                    //put cube in
-                    robit.outtake.setOuttake(outtake.outtakePos.OUT_OPEN);
+                .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+                    robit.intake.setMotorPower(-1);
                 })
-                .setReversed(false)
-                .waitSeconds(0.5)
-                .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
-                    //put cube in
-                    robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
-                })
-                .UNSTABLE_addTemporalMarkerOffset(1, ()-> {
-                    //put lift down and put servos back
-                    robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
-                })
-                .splineTo(new Vector2d(20, 68), Math.toRadians(0))
+                .lineToConstantHeading(hubPose.vec())
                 .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                    robit.intake.setMotorPower(1);
-
+                    robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED);
                 })
-                .splineTo(new Vector2d(55, 66), Math.toRadians(0))
+                .waitSeconds(0.25)
+                .setReversed(false)
+                .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
+                    robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
+                    robit.intake.setMotorPower(1);
+                })
+                .splineTo(new Vector2d(25, 66), Math.toRadians(0))
+                .splineTo(new Vector2d(35, 66), Math.toRadians(0))
+                .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+
+                    cyclepos = cyclePos.finding;
+                })
+                .splineTo(new Vector2d(55, 66), Math.toRadians(0),
+                        SampleMecanumDrive.getVelocityConstraint(5, 5, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
 
@@ -79,54 +77,66 @@ public class bluewarehouse extends LinearOpMode {
 
 
 
+        int numberofruns = 0;
         long startTime = System.currentTimeMillis();
         while (opModeIsActive()) {
-
-            if (!drive.isBusy()) {
+            if (cyclepos == cyclePos.finding) {
                 long currentTime = System.currentTimeMillis();
-                if ((30000 - (currentTime - startTime)) > 5000) {
-
+                if ((30000 - (currentTime - startTime)) < 5000) {
                     drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(drive.getPoseEstimate())
-                            .setReversed(true)
-                            .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
-                                //put slide up
+                            .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                                 robit.intake.setMotorPower(-1);
-                                //robit.outtake.setOuttake(outtake.outtakePos.IN_CLOSED);
                             })
-                            .UNSTABLE_addTemporalMarkerOffset(1, () -> {
-                                //put cube in
-                                //robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED_START);
-                            })
-                            .splineTo(new Vector2d(20, 68), Math.toRadians(180))
+                            .back(1)
 
+                            .build());
+                } else if (robit.intake.intakedBlock()) {
+                    Pose2d currentPose = drive.getPoseEstimate();
+
+
+                    drive.followTrajectorySequenceAsync(drive.trajectorySequenceBuilder(currentPose)
+                            .setReversed(true)
                             .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                                //put cube in
-                                robit.intake.setMotorPower(0);
-                                robit.outtake.setTargetLiftPos(outtake.liftPos.UP);
+                                robit.intake.setMotorPower(-1);
                             })
-                            .splineTo(hubPose.vec(), hubPose.getHeading())
-                            .UNSTABLE_addTemporalMarkerOffset(0, () -> {
-                                //put cube in
+                            .splineTo(new Vector2d(25, 66), Math.toRadians(180))
+                            .UNSTABLE_addDisplacementMarkerOffset(0, ()-> {
                                 robit.outtake.setOuttake(outtake.outtakePos.OUT_OPEN);
+                            })
+
+                            .splineTo(new Vector2d(-18, 45), Math.toRadians(270), SampleMecanumDrive.getVelocityConstraint(40, 40, DriveConstants.TRACK_WIDTH),
+                                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                            .splineTo(new Vector2d(-18, 40), Math.toRadians(270), SampleMecanumDrive.getVelocityConstraint(20, 20, DriveConstants.TRACK_WIDTH),
+                                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+
+                            .setReversed(false)
+                            .UNSTABLE_addTemporalMarkerOffset(0, () -> {
+                                robit.outtake.setOuttake(outtake.outtakePos.OUT_CLOSED);
+                            })
+                            .UNSTABLE_addTemporalMarkerOffset(0.5, () -> {
+                                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
+                                robit.intake.setMotorPower(1);
 
                             })
-                            .waitSeconds(1)
-                            .UNSTABLE_addTemporalMarkerOffset(1, () -> {
-                                //put lift down and put servos back
-                                robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
-                                robit.outtake.setOuttake(outtake.outtakePos.IN_OPEN);
-                            })
-                            .setReversed(false)
-                            .splineTo(new Vector2d(20, 68), Math.toRadians(0))
+                            .splineTo(new Vector2d(20, 66), Math.toRadians(0))
                             .UNSTABLE_addTemporalMarkerOffset(0, () -> {
                                 robit.intake.setMotorPower(1);
                             })
-                            .splineTo(new Vector2d(55, 68), Math.toRadians(0))
-                            .build());
+                            .splineTo(new Vector2d(35 + 3* numberofruns, 66), Math.toRadians(0))
+                            .UNSTABLE_addTemporalMarkerOffset(0, ()-> {
+                                cyclepos = cyclePos.finding;
+                            })
+                            .splineToConstantHeading(new Vector2d(55, 66), Math.toRadians(0), SampleMecanumDrive.getVelocityConstraint(5, 5, DriveConstants.TRACK_WIDTH),
+                                    SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                            .build()
+
+                   );
+                    numberofruns++;
+                    cyclepos = cyclePos.out;
                 }
-
-
             }
+
+
             drive.update();
             robit.update();
             telemetry.addLine("running");

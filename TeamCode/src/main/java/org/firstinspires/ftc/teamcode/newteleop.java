@@ -118,7 +118,7 @@ public class newteleop extends LinearOpMode {
                             new Pose2d(
                                     gamepadY * speeeed,
                                     -gamepad1.left_stick_x * speeeed,
-                                    turn
+                                    turn * speeeed
                             )
                     );
                     break;
@@ -146,6 +146,11 @@ public class newteleop extends LinearOpMode {
                 robit.outtake.setTargetLiftPos(outtake.liftPos.BOTTOM);
             }
 
+            if (gamepad1.b) {
+                robit.outtake.tseMove();
+            } else {
+                robit.outtake.activated = false;
+            }
 
 
 
